@@ -197,4 +197,19 @@ class ControllerCheckoutShippingAddress extends Controller {
 		$this->response->addHeader('Content-Type: application/json');
 		$this->response->setOutput(json_encode($json));
 	}
+
+	public function iskw() {
+		if(isset($this->request->post['addressId'])) {
+			$address_id = $this->request->post['addressId'];
+			$this->db->query("UPDATE " . DB_PREFIX . "customer SET address_id = '" . (int)$address_id . "' WHERE customer_id = '" . (int)$this->customer->getId() . "'");
+			$isCouponActive = strtolower($this->session->data['coupon']) == "kwfree2016" && $this->customer->isKW();
+
+			$json['success'] = $isCouponActive;
+		} else {
+			$json['success'] = true;
+		}
+
+		$this->response->addHeader('Content-Type: application/json');
+		$this->response->setOutput(json_encode($json));
+	}
 }

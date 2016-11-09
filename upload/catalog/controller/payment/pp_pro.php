@@ -130,21 +130,7 @@ class ControllerPaymentPPPro extends Controller {
 
 		$order_info = $this->model_checkout_order->getOrder($this->session->data['order_id']);
 
-		$quantity = 0;
-		foreach ($this->cart->getProducts() as $item) {
-			$quantity += $item['quantity'];
-		}
-
-		// shipping
-		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-
-		if($quantity == 0) {
-			$shipping = 0;
-		} else if($quantity >= 10) {
-			$shipping = $shipping_array[count($shipping_array) - 1];
-		} else {
-			$shipping = $shipping_array[$quantity - 1];
-		}
+		$shipping = $this->cart->getShipping();
 
 		$order_info['total'] += $shipping;
 

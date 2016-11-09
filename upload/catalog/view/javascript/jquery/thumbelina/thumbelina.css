@@ -27,11 +27,11 @@
     white-space:nowrap;
     /* font-size:0 stop gaps between display-inline li elemets */
     /* Either do this, or remove all white space in HTML beween li elements */
-    font-size:0;    
-    
+    font-size:0;
+
     /* prevent annoying iPad cut/paste actions */
-    -webkit-touch-callout: none; 
-    -webkit-user-select: none;     
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
 }
 
 /* Style for the list items that surround the thumbnails */
@@ -51,7 +51,7 @@
      border:1px solid #aaa;
 }
 
-    
+
 /*
     Following is the CSS for the navigation buttons.
     They are designed to fit flush on the ends of the slider
@@ -65,12 +65,12 @@
 /* Common style for the buttons */
 .thumbelina-but {
     position:absolute;
-    background-color: #ccc;
+    /*background-color: #ccc;
     border:1px solid #aaa;
-    box-shadow: 0px 0px 8px rgba(0,0,0,0.25);
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.25);*/
     z-index: 1;
-    cursor:pointer;   
-    
+    cursor:pointer;
+
     /* Font related items for the symbols used on buttons */
     /* Obviously not needed if you're just using images */
     color:#888;
@@ -81,17 +81,17 @@
     font-family:monospace;
 }
 
-/* Hover style for active button */    
+/* Hover style for active button */
 .thumbelina-but:hover {
-    color:#fff;
-    box-shadow: 0px 0px 8px rgba(0,0,0,0.5);
+    /*color:#fff;
+    box-shadow: 0px 0px 8px rgba(0,0,0,0.5);*/
 }
 
 /* Disabled style when button is not active due to extents being reached. */
 /* You could do other things e.g. make buttons dissapear completely. */
 .thumbelina-but.disabled,
 .thumbelina-but.disabled:hover {
-    background-color: #efefef;
+    /*background-color: #efefef;*/
     color: #ccc;
     cursor:default;
     box-shadow:none;
@@ -99,9 +99,9 @@
 
 /* Horizontal buttons. */
 .thumbelina-but.horiz {
-    width: 20px;
-    height: 119px;
-    line-height: 119px;
+    /*width: 20px;
+    height: 119px;*/
+    line-height: 80px;
     top:-1px;
 
 }
@@ -116,7 +116,7 @@
     border-radius: 0px 5px 5px 0px;
 }
 
-/* Vertical buttons. */  
+/* Vertical buttons. */
 .thumbelina-but.vert {
     left:-1px;
     height: 20px;
@@ -134,4 +134,11 @@
 .thumbelina-but.vert.bottom {
     bottom:-22px;
     border-radius: 0px 0px 5px 5px;
+}
+
+#slider {
+    position:relative;  /* Containers need relative or absolute position. */
+    margin-left:20px;
+    width:290px;
+    height:120px;
 }

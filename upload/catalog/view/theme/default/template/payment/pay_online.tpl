@@ -16,7 +16,6 @@
                 $('#button-confirm').button('reset');
             },
             success: function(json) {
-                debugger;
                 if(json['success'] == 1) {
                     location = '<?php echo $continue; ?>';
                 } else {

@@ -71,6 +71,21 @@ class ModelTotalCoupon extends Model {
 					$status = false;
 				}
 			}
+
+			$discount_total = $coupon_query->row['discount'];
+
+			// coupon
+			if($this->customer->isLogged() || isset($this->session->data['guest'])) {
+				if (strtolower($coupon_query->row['code']) == "kwfree2016" && $this->cart->countProducts() > 1 && $this->customer->isKW()) {
+					//$discount_total = $this->tax->calculate($this->cart->getShipping(), $this->cart->getTaxClassId(), $this->config->get('config_tax'));
+					$discount_total = $this->cart->getShipping();
+				}
+			} else {
+				if (strtolower($coupon_query->row['code']) == "kwfree2016" && $this->cart->countProducts() > 1) {
+					//$discount_total = $this->tax->calculate($this->cart->getShipping(), $this->cart->getTaxClassId(), $this->config->get('config_tax'));
+					$discount_total = $this->cart->getShipping();
+				}
+			}
 		} else {
 			$status = false;
 		}
@@ -81,7 +96,7 @@ class ModelTotalCoupon extends Model {
 				'code'          => $coupon_query->row['code'],
 				'name'          => $coupon_query->row['name'],
 				'type'          => $coupon_query->row['type'],
-				'discount'      => $coupon_query->row['discount'],
+				'discount'      => $discount_total,
 				'shipping'      => $coupon_query->row['shipping'],
 				'total'         => $coupon_query->row['total'],
 				'product'       => $product_data,
@@ -176,6 +191,14 @@ class ModelTotalCoupon extends Model {
 						'value'      => -$discount_total,
 						'sort_order' => $this->config->get('coupon_sort_order')
 					);
+
+					// coupon
+					if(isset($coupon_info['code'])) {
+						if (strtolower($coupon_info['code']) == "kwfree2016" && $this->cart->countProducts() > 1 && $this->customer->isKW()) {
+							//$discount_total = $this->tax->calculate($this->cart->getShipping(), $this->cart->getTaxClassId(), $this->config->get('config_tax'));
+							$discount_total = $this->cart->getShipping();
+						}
+					}
 
 					$total['total'] -= $discount_total;
 				} else {

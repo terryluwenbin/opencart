@@ -199,6 +199,7 @@
     <?php } ?>
     <?php } ?>
   </div>
+    <p id="couponMsg" style="color:red;"></p>
   <div class="buttons clearfix">
     <div class="pull-right">
       <input type="button" value="<?php echo $button_continue; ?>" id="button-shipping-address" data-loading-text="<?php echo $text_loading; ?>" class="btn btn-primary" />
@@ -208,6 +209,40 @@
 <hr />
 <h3><b><?php echo $text_shipping_time_title; ?></b></h3>
 <p><?php echo $text_shipping_time_content; ?></p>
+<script type="text/javascript">
+    $(function () {
+        $.ajax({
+            url: 'index.php?route=checkout/shipping_address/iskw',
+            type: 'post',
+            data:"addressId=" + $('select[name=\'address_id\'] option:selected').val(),
+            dataType: 'json',
+            success:function (json) {
+                if(!json['success']) {
+                    $('#couponMsg').html("Coupon can be only used in KW area.");
+                } else {
+                    $('#couponMsg').html('');
+                }
+            }
+        });
+
+        $('select[name=\'address_id\']').on('change', function () {
+            $.ajax({
+                url: 'index.php?route=checkout/shipping_address/iskw',
+                type: 'post',
+                data:"addressId=" + $(this).val(),
+                dataType: 'json',
+                success:function (json) {
+                    if(!json['success']) {
+                        $('#couponMsg').html("Coupon can be only used in KW area.");
+                    } else {
+                        $('#couponMsg').html('');
+                    }
+                }
+            });
+        });
+    });
+</script>
+
 <script type="text/javascript"><!--
 $('input[name=\'shipping_address\']').on('change', function() {
 	if (this.value == 'new') {

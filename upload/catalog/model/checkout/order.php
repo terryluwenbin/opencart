@@ -1,26 +1,7 @@
 <?php
 class ModelCheckoutOrder extends Model {
 	public function addOrder($data) {
-		$quantity = 0;
-
-		if (isset($data['products'])) {
-			foreach ($data['products'] as $product) {
-				$quantity += (int)$product['quantity'];
-			}
-		}
-		
-		// shipping
-		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-
-		if($quantity == 0) {
-			$shipping = 0;
-		} else if($quantity >= 10) {
-			$shipping = $shipping_array[count($shipping_array) - 1];
-		} else {
-			$shipping = $shipping_array[$quantity - 1];
-		}
-
-		$data['total'] += $shipping;
+		$data['total'] += $this->cart->getShipping();
 
 		$this->db->query("INSERT INTO `" . DB_PREFIX . "order` SET invoice_prefix = '" . $this->db->escape($data['invoice_prefix'])
 			. "', store_id = '" . (int)$data['store_id'] . "', store_name = '" . $this->db->escape($data['store_name']) . "', store_url = '" . $this->db->escape($data['store_url'])
@@ -82,12 +63,12 @@ class ModelCheckoutOrder extends Model {
 
 		// Totals
 		if (isset($data['totals'])) {
-			$shippings = array(array("code" => "shipping", "title" => "Shipping", "value" => $shipping, "sort_order" => 2));
-			$data['totals'] = array_merge($data['totals'], $shippings);
+			$shipping = array(array("code" => "shipping", "title" => "Shipping", "value" => $this->cart->getShipping(), "sort_order" => 2));
+			$data['totals'] = array_merge($data['totals'], $shipping);
 
 			foreach ($data['totals'] as $total) {
 				if($total['code'] == "total") {
-					$total['value'] += $shipping;
+					$total['value'] += $this->cart->getShipping();
 				}
 
 				$this->db->query("INSERT INTO " . DB_PREFIX . "order_total SET order_id = '" . (int)$order_id . "', code = '" . $this->db->escape($total['code']) . "', title = '" . $this->db->escape($total['title']) . "', `value` = '" . (float)$total['value'] . "', sort_order = '" . (int)$total['sort_order'] . "'");

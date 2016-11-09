@@ -42,7 +42,6 @@
   </div>
   <script>
     $(function () {
-
       $('.welcome > ul > li > a span').hide();
       $('.welcome > ul > li > a').hover(function () {
         $(this).find("img").hide();
@@ -51,6 +50,12 @@
         $(this).find("img").show();
         $(this).find("span").hide();
       });
+
+      if(localStorage.getItem("isFirst")) {
+        $('.welcome').hide();
+      } else {
+        localStorage.setItem("isFirst",true);
+      }
     });
   </script>
 

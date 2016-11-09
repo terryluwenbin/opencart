@@ -76,8 +76,6 @@ class ModelPaymentPPExpress extends Model {
 		$i = 0;
 		$item_total = 0;
 
-		$quantity = 0;
-
 		foreach ($this->cart->getProducts() as $item) {
 			$data['L_PAYMENTREQUEST_0_DESC' . $i] = '';
 
@@ -126,8 +124,6 @@ class ModelPaymentPPExpress extends Model {
 			}
 
 			$i++;
-
-			$quantity += $item['quantity'];
 		}
 
 		if (!empty($this->session->data['vouchers'])) {
@@ -188,22 +184,14 @@ class ModelPaymentPPExpress extends Model {
 		}
 
 		// shipping
-		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-
-		if($quantity == 0) {
-			$shipping = 0;
-		} else if($quantity >= 10) {
-			$shipping = $shipping_array[count($shipping_array) - 1];
-		} else {
-			$shipping = $shipping_array[$quantity - 1];
-		}
-
-		$shippings = array(array("code" => "shipping", "title" => "Shipping", "value" => $shipping, "sort_order" => 5));
-		$total_data['totals'] = array_merge($totals, $shippings);
+		$shipping = array(array("code" => "shipping", "title" => "Shipping", "value" => $this->cart->getShipping(), "sort_order" => 5));
+		$total_data['totals'] = array_merge($totals, $shipping);
 
 		foreach ($total_data['totals'] as $total_row) {
 			if (!in_array($total_row['code'], array('total', 'sub_total'))) {
-				if ($total_row['value'] != 0) {
+				//if ($total_row['value'] != 0) {
+				if (($total_row['code'] != "coupon" && $total_row['value'] != 0)
+					|| ($total_row['code'] == "coupon" && $total_row['value'] < -1)) {
 					$item_price = $this->currency->format($total_row['value'], $this->session->data['currency'], false, false);
 
 					$data['L_PAYMENTREQUEST_0_NUMBER' . $i] = $total_row['code'];

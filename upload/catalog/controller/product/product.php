@@ -352,10 +352,10 @@ class ControllerProductProduct extends Controller {
 //				$per_price = $this->currency->format($product_info['price']/6, $this->session->data['currency']);
 				if($data['energy']){
 					$data['price'] = $this->currency->format($product_info['price'] - $energy_price, $this->session->data['currency']);
-					$per_price =   number_format(($product_info['price'] - $energy_price) / 6,2);
+					$per_price = ($product_info['price'] - $energy_price) / 6;
 				} else {
 					$data['price'] = $this->currency->format($product_info['price'], $this->session->data['currency']);
-					$per_price = number_format($product_info['price']/6,2);
+					$per_price = $product_info['price']/6;
 				}
 
 				$data['text_per_bulb'] = sprintf($this->language->get('text_per_bulb'), round($per_price, 2));
@@ -368,10 +368,10 @@ class ControllerProductProduct extends Controller {
 
 				if($data['energy']){
 					$data['special'] = $this->currency->format($product_info['special'] - $energy_price, $this->session->data['currency']);
-					$per_price = number_format(($product_info['special'] - $energy_price) / 6,2);
+					$per_price = ($product_info['special'] - $energy_price) / 6;
 				} else {
 					$data['special'] = $this->currency->format($product_info['special'], $this->session->data['currency']);
-					$per_price =number_format( $product_info['special'] / 6,2);
+					$per_price = $product_info['special'] / 6;
 				}
 
 				$data['text_per_bulb'] = sprintf($this->language->get('text_per_bulb'), round($per_price, 2));

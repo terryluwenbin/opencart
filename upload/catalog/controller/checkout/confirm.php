@@ -340,9 +340,6 @@ class ControllerCheckoutConfirm extends Controller {
 
 			$this->load->model('tool/upload');
 
-			$quantity = 0;
-			$tax_class_id = 0;
-
 			$data['products'] = array();
 
 			foreach ($this->cart->getProducts() as $product) {
@@ -403,9 +400,6 @@ class ControllerCheckoutConfirm extends Controller {
 					'total'      => $this->currency->format($product['price'] * $product['quantity'], $this->session->data['currency']),
 					'href'       => $this->url->link('product/product', 'product_id=' . $product['product_id'])
 				);
-
-				$quantity += $product['quantity'];
-				$tax_class_id = $product['tax_class_id'];
 			}
 
 			// Gift Voucher
@@ -421,29 +415,14 @@ class ControllerCheckoutConfirm extends Controller {
 			}
 
 			// shipping
-			$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-
-			if($quantity == 0) {
-				$shipping = 0;
-			} else if($quantity >= 10) {
-				$shipping = $shipping_array[count($shipping_array) - 1];
-			} else {
-				$shipping = $shipping_array[$quantity - 1];
-			}
-
-			// shipping * rate
-			$shipping_rate = $shipping * $this->tax->getRate($tax_class_id)/100;
+			$shipping = $this->cart->getShipping();
 
 			$data['totals'] = array();
 
 			foreach ($totals as $key => $total) {
-				if($total['code'] == 'tax') {
-					$total['value'] += $shipping_rate;
-				}
-
 				if($total['code'] == "total") {
 					$total['class'] = "price-total";
-					$total['value'] += ($shipping + $shipping_rate);
+					$total['value'] += $shipping;
 				} else {
 					$total['class'] = "";
 				}
@@ -455,15 +434,17 @@ class ControllerCheckoutConfirm extends Controller {
 					$total['addin'] = $this->cart->getOriginalTotal();
 				}
 
-				$data['results'][] = array(
-					'code'	=> $total['code'],
-					'title' => $total['title'],
-					'value' => $total['value'],
-					'text'	=> $this->currency->format($total['value'], $this->session->data['currency']),
-					'class' => $total['class'],
-					'addin' => $total['addin'],
-					'sort_order' => $key
-				);
+				if($total['code'] != "coupon" || ($total['code'] == "coupon" && $total['value'] < -1)) {
+					$data['results'][] = array(
+						'code' => $total['code'],
+						'title' => $total['title'],
+						'value' => $total['value'],
+						'text' => $this->currency->format($total['value'], $this->session->data['currency']),
+						'class' => $total['class'],
+						'addin' => $total['addin'],
+						'sort_order' => $key
+					);
+				}
 			}
 
 			$this->session->data['order_data'] = $order_data;
@@ -480,9 +461,15 @@ class ControllerCheckoutConfirm extends Controller {
 			$totals = $this->array_push_before($totals, $data['shipping'], 1);
 
 			if($this->cart->getOriginalTotal() - $this->cart->getSubTotal() > 0) {
-				$data['saving'][] = array("code" => "price-saving", "title" => "Saving", "value" => ($this->cart->getOriginalTotal() - $this->cart->getSubTotal()) ,"class" =>"price-saving","addin" => 0, 'sort_order' => count($totals) + 1);
+				// use coupon
+				if(isset($this->session->data['coupon']) && strtolower($this->session->data['coupon']) == "kwfree2016" && $this->cart->countProducts() > 1 && $this->customer->isKW()) {
+					$saving_price = ($this->cart->getOriginalTotal() - $this->cart->getSubTotal()) + $shipping;
+				} else {
+					$saving_price = ($this->cart->getOriginalTotal() - $this->cart->getSubTotal());
+				}
+				$data['saving'][] = array("code" => "price-saving", "title" => "Saving", "value" => $saving_price ,"class" =>"price-saving","addin" => 0, 'sort_order' => count($totals) + 1);
 			} else {
-				$data['saving'][] = array("code" => "price-saving", "title" => "Saving", "value" => ($this->cart->getOriginalTotal() - $this->cart->getSubTotal()) ,"class" =>"price-saving hide","addin" => 0, 'sort_order' => count($totals) + 1);
+				$data['saving'][] = array("code" => "price-saving", "title" => "Saving", "value" => 0 ,"class" =>"price-saving hide","addin" => 0, 'sort_order' => count($totals) + 1);
 			}
 
 			$order_data['totals'] = $this->array_push_before($totals, $data['saving'], count($totals));

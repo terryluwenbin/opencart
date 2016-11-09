@@ -337,9 +337,7 @@ class Cart {
 	public function getTaxes() {
 		$tax_data = array();
 		$tax_shipping_data = array();
-		// shipping
-		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-		$quantity = 0;
+
 		foreach ($this->getProducts() as $product) {
 			if ($product['tax_class_id']) {
 				$tax_rates = $this->tax->getRates($product['price'], $product['tax_class_id']);
@@ -353,17 +351,9 @@ class Cart {
 					}
 				}
 			}
-
-			$quantity += $product['quantity'];
 		}
 
-		if($quantity == 0) {
-			$shipping = 0;
-		} else if($quantity >= 10) {
-			$shipping = $shipping_array[count($shipping_array) - 1];
-		} else {
-			$shipping = $shipping_array[$quantity - 1];
-		}
+		$shipping = $this->getShipping();
 
 		if(isset($tax_rate['tax_rate_id'])) {
 			// shipping * rate
@@ -382,10 +372,32 @@ class Cart {
 		$total = 0;
 
 		// shipping
-		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
-		$quantity = 0;
+		$shipping = $this->getShipping();
+
+		foreach ($this->getProducts() as $product) {
+			//$quantity += $product['quantity'];
+			$total += $this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'];
+		}
+		
+		$total += $this->tax->calculate($shipping, $this->getTaxClassId(), $this->config->get('config_tax'));
+
+		return $total;
+	}
+
+	public function getTaxClassId() {
 		$tax_class_id = 0;
 
+		foreach ($this->getProducts() as $product) {
+			$tax_class_id = $product['tax_class_id'];
+		}
+
+		return $tax_class_id;
+	}
+
+	public function getShipping() {
+		// shipping
+		$shipping_array = array(4.9, 7, 9, 12, 15, 17, 19, 21, 22, 23);
+		$quantity = $this->countProducts();
 		if($quantity == 0) {
 			$shipping = 0;
 		} else if($quantity >= 10) {
@@ -394,17 +406,7 @@ class Cart {
 			$shipping = $shipping_array[$quantity - 1];
 		}
 
-		foreach ($this->getProducts() as $product) {
-			$quantity += $product['quantity'];
-			$total += $this->tax->calculate($product['price'], $product['tax_class_id'], $this->config->get('config_tax')) * $product['quantity'];
-			$tax_class_id = $product['tax_class_id'];
-		}
-
-		// shipping * rate
-		$shipping_rate = $shipping * $this->tax->getRate($tax_class_id)/100;
-		$total += ($shipping + $shipping_rate);
-
-		return $total;
+		return $shipping;
 	}
 
 	public function getOriginalTotal() {

@@ -44,8 +44,7 @@
               <a class="cloud-zoomnomb" title="<?php echo $heading_title; ?>"><img class="img-responsive" src="<?php echo $images[0]['popup']; ?>"  title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a>
               <?php } ?>
 
-
-              <ul class="thumbnails">
+              <!--<ul class="thumbnails">
                 <?php if ($images) { ?>
                 <?php foreach ($images as $image) { ?>
                 <li class="image-additional">
@@ -58,8 +57,27 @@
                 </li>
                 <?php } ?>
                 <?php } ?>
-              </ul>
+              </ul>-->
 
+              <div id="slider">
+                <div class="thumbelina-but horiz left"><i class="fa fa-chevron-left"></i></div>
+                <ul>
+                  <?php if ($images) { ?>
+                  <?php foreach ($images as $image) { ?>
+                  <li>
+                    <?php if(!$mobile) { ?>
+                    <a rel ="<?php echo('useZoom:' .'\'' .'zoom' .'\'' .', smallImage:'.'\''. $image['popup'].''.'\'' ) ?> " class="cloud-zoom-gallery" href="<?php echo $image['large']; ?>" title="<?php echo $heading_title; ?>" >
+                      <img src="<?php echo $image['thumb']; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a>
+                    <?php } else { ?>
+                    <a rel ="<?php echo('useZoom:' .'\'' .'zoom' .'\'' .', smallImage:\'\'' ) ?> " href="javascript:void(0);" title="<?php echo $heading_title; ?>" data-img="<?php echo $image['popup']; ?>" onclick="fn_switch_image(this, true);">
+                      <img src="<?php echo $image['thumb']; ?>" title="<?php echo $heading_title; ?>" alt="<?php echo $heading_title; ?>" /></a>
+                    <?php } ?>
+                  </li>
+                  <?php } ?>
+                  <?php } ?>
+                </ul>
+                <div class="thumbelina-but horiz right"><i class="fa fa-chevron-right"></i></div>
+              </div>
               <?php } ?>
             </div>
             <div class="col-md-6">
@@ -780,6 +798,11 @@ $('#form-review a[name="rating"]').on('click',function(){
 });
 
 $(document).ready(function() {
+  $('#slider').Thumbelina({
+    $bwdBut:$('#slider .left'),    // Selector to left button.
+    $fwdBut:$('#slider .right')    // Selector to right button.
+  });
+
   $('input[type="checkbox"][name="energy_price"]').on('click', function () {
     var action = '<?php echo $action; ?>';
     action = action.replace(/&amp;/g, '&');

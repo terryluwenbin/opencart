@@ -37,7 +37,7 @@ class ControllerTotalCoupon extends Controller {
 
 		$coupon_info = $this->model_total_coupon->getCoupon($coupon);
 
-		if (empty($this->request->post['coupon'])) {
+		/*if (empty($this->request->post['coupon'])) {
 			$json['error'] = $this->language->get('error_empty');
 
 			unset($this->session->data['coupon']);
@@ -49,6 +49,29 @@ class ControllerTotalCoupon extends Controller {
 			$json['redirect'] = $this->url->link('checkout/cart');
 		} else {
 			$json['error'] = $this->language->get('error_coupon');
+		}*/
+
+		if (empty($this->request->post['coupon'])) {
+			$json['error'] = $this->language->get('error_empty');
+
+			unset($this->session->data['coupon']);
+		} else if(!$coupon_info) {
+			$coupon_query = $this->db->query("SELECT * FROM `" . DB_PREFIX . "coupon` WHERE code = '" . $this->db->escape($coupon) . "' AND (date_start = '0000-00-00' OR date_start < NOW()) AND status = '1'");
+			if($coupon_query->num_rows && $coupon_query->row['date_end'] < date("Y-m-d")) {
+				$json['error'] = $this->language->get('error_coupon_expired');
+			} else {
+				$json['error'] = $this->language->get('error_coupon_invalid');
+			}
+		} elseif ($coupon_info && $this->cart->countProducts() > 1) {
+			$this->session->data['coupon'] = $this->request->post['coupon'];
+
+			$this->session->data['success'] = $this->language->get('text_success');
+
+			$json['redirect'] = $this->url->link('checkout/cart');
+		} else if($coupon_info && $this->cart->countProducts() == 1) {
+			$json['error'] = $this->language->get('error_coupon_num');
+		} else {
+			$json['error'] = $this->language->get('error_coupon_invalid');
 		}
 
 		$this->response->addHeader('Content-Type: application/json');

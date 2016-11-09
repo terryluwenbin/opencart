@@ -163,4 +163,24 @@ class Customer {
 
 		return $query->row['total'];
 	}
+
+	// Kitchener or Waterloo
+	public function isKW() {
+		if(isset($this->session->data['guest'])) {
+			$address = $this->session->data['shipping_address'];
+			return !empty($address['city']) && (strtolower(trim($address['city'])) == "waterloo" || strtolower(trim($address['city'])) == "kitchener") && $address['country_id'] == 38 && $address['zone_id'] == 610;
+		} else {
+			$query = $this->db->query("SELECT * FROM oc_address WHERE address_id = (SELECT address_id FROM oc_customer WHERE customer_id = '" . (int)$this->customer_id . "')");
+
+			if ($query->num_rows) {
+				$city = $query->row['city'];
+				$country_id = $query->row['country_id'];
+				$zone_id = $query->row['zone_id'];
+
+				return !empty($city) && (strtolower(trim($city)) == "waterloo" || strtolower(trim($city)) == "kitchener") && $country_id == 38 && $zone_id == 610;
+			}
+
+			return false;
+		}
+	}
 }

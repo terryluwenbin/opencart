@@ -32,7 +32,9 @@
 <link href="catalog/view/javascript/jquery/spinner/bootstrap-spinner.css" rel="stylesheet" type="text/css" />
 <script src="catalog/view/javascript/jquery/spinner/jquery.spinner.min.js" type="text/javascript"></script>
 <link href="catalog/view/javascript/jquery/cloud-zoom/cloud-zoom.css" rel="stylesheet" type="text/css" />
+<link href="catalog/view/javascript/jquery/thumbelina/thumbelina.css" rel="stylesheet" type="text/css" />
 <script src="catalog/view/javascript/jquery/cloud-zoom/cloud-zoom.js" type="text/javascript"></script>
+<script src="catalog/view/javascript/jquery/thumbelina/thumbelina.js" type="text/javascript"></script>
 
 <?php foreach ($styles as $style) { ?>
 <link href="<?php echo $style['href']; ?>" type="text/css" rel="<?php echo $style['rel']; ?>" media="<?php echo $style['media']; ?>" />
