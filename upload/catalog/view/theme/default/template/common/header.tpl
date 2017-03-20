@@ -117,18 +117,113 @@
   </div>
 </header>
 < */ ?>
+<script src="catalog/view/javascript/so_megamenu.js" type="text/javascript"></script>
+
+<link href="catalog/view/javascript/css/so_megamenu.css" rel="stylesheet">
+<link href="catalog/view/javascript/css/so-categories.css" rel="stylesheet">
+<link href="catalog/view/javascript/css/so-listing-tabs.css" rel="stylesheet">
+<link href="catalog/view/javascript/css/theme.css" rel="stylesheet">
+<style>
+  .animated {
+    -webkit-animation-duration: 0.4s;
+    animation-duration: 0.4s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+  }
+
+  @-webkit-keyframes flip_InX {
+    from {
+      -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -90deg);
+      transform: perspective(400px) rotate3d(1, 0, 0, -90deg);
+      transform-origin: 50% 0 0;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+    }
+
+    to {
+      -webkit-transform: perspective(400px);
+      transform: perspective(400px);
+    }
+  }
+
+  @keyframes flip_InX {
+    from {
+      -webkit-transform: perspective(400px) rotate3d(1, 0, 0, -90deg);
+      transform: perspective(400px) rotate3d(1, 0, 0, -90deg);
+      transform-origin: 50% 0 0;
+      opacity: 0;
+      transition: all 0.4s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0s;
+    }
+
+    to {
+      -webkit-transform: perspective(400px);
+      transform: perspective(400px);
+    }
+  }
+
+  .flip_InX {
+    -webkit-backface-visibility: visible !important;
+    backface-visibility: visible !important;
+    -webkit-animation-name: flip_InX;
+    animation-name: flip_InX;
+  }
+</style>
+
 <?php if ($categories) { ?>
-<div class="container">
-  <nav id="menu" class="navbar">
-    <div class="navbar-header"><span id="category" class="visible-xs"><?php echo $text_category; ?></span>
+  <nav id="menu" >
+    <div class="container">
+    <div class="navbar-header"  ><span id="category" class="visible-xs"><?php echo $text_category; ?></span>
       <button type="button" class="btn btn-navbar navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse"><i class="fa fa-bars"></i></button>
     </div>
     <div class="collapse navbar-collapse navbar-ex1-collapse">
-      <ul class="nav navbar-nav">
+      <ul class="nav navbar-nav megamenu">
         <?php foreach ($categories as $category) { ?>
         <?php if ($category['children']) { ?>
-        <li class="dropdown"><a href="<?php echo $category['href']; ?>" class="dropdown-toggle" data-toggle="dropdown"><?php echo $category['name']; ?></a>
-          <div class="dropdown-menu">
+        <?php if ($category['name']=='Lamps') { ?>
+        <li class="with-sub-menu hover " >
+          <p class="close-menu"></p>
+          <a href="<?php echo $category['href']; ?>" class="clearfix">
+            <strong><?php echo $category['name']; ?></strong>
+            <span class="label"></span>
+            <b class="caret"></b>
+          </a>
+          <?php foreach (array_chunk($category['children'], ceil(count($category['children']) / $category['column'])) as $children) { ?>
+          <div class="sub-menu animated flip_InX" style="width: 550%; display: none;">
+            <div class="content" >
+              <div class="row">
+                <div class="col-sm-12">
+                  <div class="row">
+                    <?php foreach ($children as $child) { ?>
+                    <div class="col-md-3 img img1">
+                      <a href="<?php echo $child['href']; ?>"><img src="<?php echo $child['image']; ?>" alt="banner1"></a>
+                    </div>
+                    <?php } ?>
+                  </div>
+                </div>
+              </div>
+
+              <div class="row">
+                <?php foreach ($children as $child) { ?>
+                <div class="col-md-3">
+                  <a href="<?php echo $child['href']; ?>" class="title-submenu"><?php echo $child['name']; ?></a>
+                </div>
+                <?php } ?>
+
+              </div>
+            </div>
+          </div>
+          <?php } ?>
+        </li>
+        <?php } else { ?>
+        <script language="javascript" type="text/javascript">
+            $(document).ready(function() {
+              $(".categorymenu").click(function(){
+              window.location.href=$(this).attr("href");
+              });
+            });
+        </script>
+        <li class="dropdown"><a href="<?php echo $category['href']; ?>" class="dropdown-toggle categorymenu" data-toggle="dropdown"><?php echo $category['name']; ?><b class="caret"></b></a>
+          <div class="dropdown-menu animated flip_InX">
             <div class="dropdown-inner">
               <?php foreach (array_chunk($category['children'], ceil(count($category['children']) / $category['column'])) as $children) { ?>
               <ul class="list-unstyled">
@@ -140,14 +235,15 @@
             </div>
             <a href="<?php echo $category['href']; ?>" class="see-all"><?php echo $text_all; ?> <?php echo $category['name']; ?></a> </div>
         </li>
+        <?php } ?>
         <?php } else { ?>
         <li><a href="<?php echo $category['href']; ?>"><?php echo $category['name']; ?></a></li>
         <?php } ?>
         <?php } ?>
       </ul>
     </div>
+    </div>
   </nav>
-</div>
 <?php } ?>
 
 

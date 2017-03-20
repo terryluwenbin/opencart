@@ -1,20 +1,24 @@
 <?php echo $header; ?>
 <div class="container">
-  <ul class="breadcrumb">
-    <?php foreach ($breadcrumbs as $breadcrumb) { ?>
-    <li><a href="<?php echo $breadcrumb['href']; ?>"><?php echo $breadcrumb['text']; ?></a></li>
-    <?php } ?>
-  </ul>
-  <div class="row"><?php echo $column_left; ?>
-    <?php if ($column_left && $column_right) { ?>
-    <?php $class = 'col-sm-6'; ?>
-    <?php } elseif ($column_left || $column_right) { ?>
-    <?php $class = 'col-sm-9'; ?>
-    <?php } else { ?>
-    <?php $class = 'col-sm-12'; ?>
-    <?php } ?>
+  <link href="catalog/view/javascript/css/stylesheet.css" rel="stylesheet">
+  <?php if(count($categories)>0) { ?>
+  <div class="refine-search panel panel-center space-20 border" >
+    <div class="panel-heading hidden">
+      <h4 class="panel-title"></h4>
+    </div>
+    <div class="panel-body border">
+      <ul class="list-inline">
+        <?php foreach ($categories as $item) { ?>
+        <li ><a href="<?php echo  $item['href']; ?>"><?php echo $item['name']; ?></a></li>
+        <?php } ?>
+
+      </ul>
+    </div>
+  </div>
+  <?php } ?>
+  <div class="row">
     <div id="content" class="<?php echo $class; ?>"><?php echo $content_top; ?>
-      <h2><?php echo $heading_title; ?></h2>
+      <h2></h2>
       <?php if ($thumb || $description) { ?>
       <div class="row">
         <?php if ($thumb) { ?>
@@ -118,16 +122,15 @@
                   <?php } else { ?>
                   <span class="price-new"><?php echo $product['special']; ?></span> <span class="price-old"><?php echo $product['price']; ?></span>
                   <?php } ?>
-                  <?php if ($product['tax']) { ?>
-                  <span class="price-tax"><?php echo $text_tax; ?> <?php echo $product['tax']; ?></span>
-                  <?php } ?>
+
                 </p>
                 <?php } ?>
               </div>
               <div class="button-group">
-                <button type="button" onclick="cart.add('<?php echo $product['product_id']; ?>', '<?php echo $product['minimum']; ?>');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md"><?php echo $button_cart; ?></span></button>
-                <button type="button" data-toggle="tooltip" title="<?php echo $button_wishlist; ?>" onclick="wishlist.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-heart"></i></button>
-                <button type="button" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>
+                <button type="button" onclick="javascript:window.location='<?php echo $product['href']; ?>'"><i class="fa fa-eye"></i> <span class="hidden-xs hidden-sm hidden-md">View Detail</span></button>
+                <button type="button" style="display:none;" onclick="cart.add('<?php echo $product['product_id']; ?>', '<?php echo $product['minimum']; ?>');"><i class="fa fa-shopping-cart"></i> <span class="hidden-xs hidden-sm hidden-md"><?php echo $button_cart; ?></span></button>
+                <button type="button" style="display:none;" data-toggle="tooltip" title="<?php echo $button_wishlist; ?>" onclick="wishlist.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-heart"></i></button>
+                <button type="button" style="display:none;" data-toggle="tooltip" title="<?php echo $button_compare; ?>" onclick="compare.add('<?php echo $product['product_id']; ?>');"><i class="fa fa-exchange"></i></button>
               </div>
             </div>
           </div>

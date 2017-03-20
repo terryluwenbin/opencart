@@ -284,16 +284,16 @@ class ControllerCheckoutCart extends Controller {
 			
 			// show in cart.tpl
 			foreach ($totals as $total) {
-				if($total['code'] != "coupon" || ($total['code'] == "coupon" && $this->cart->countProducts() > 1)) {
-					$data['totals'][] = array(
-						'code' => $total['code'],
-						'title' => $total['title'],
-						'text' => $this->currency->format($total['value'], $this->session->data['currency']),
-						'class' => $total['class'],
-						'addin' => $total['addin']
-					);
-				}
-			}
+                if($total['code'] != "coupon" || ($total['code'] == "coupon" && $this->cart->countProducts() > 1)) {
+                    $data['totals'][] = array(
+                        'code' => $total['code'],
+                        'title' => $total['title'],
+                        'text' => $this->currency->format($total['value'], $this->session->data['currency']),
+                        'class' => $total['class'],
+                        'addin' => $total['addin']
+                    );
+                }
+            }
 
 			$data['continue'] = $this->url->link('common/home');
 
